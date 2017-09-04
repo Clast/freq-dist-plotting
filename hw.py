@@ -12,9 +12,8 @@ def main():
         print("There is no directory argument passed in")
     print(sys.argv[1])
     fdist_cumulative = generate_freqdist()
-    create_freq_plot(fdist_cumulative)
     fdist_cumulative_no_punct_or_stopwords = generate_freqdist_without_stopwords_punctuation()
-    create_freq_plot(fdist_cumulative_no_punct_or_stopwords)
+    create_freq_plot(fdist_cumulative,fdist_cumulative_no_punct_or_stopwords)
 
 
 
@@ -77,23 +76,46 @@ def remove_stopwords(tokens):
     tokens = [word for word in tokens if word not in stopwords.words('english')]  # Remove stopwords
     return tokens
 
-def create_freq_plot(data):
+def create_freq_plot(data, data_no_stoporpunct):
     data = data.most_common(50)
+    data_no_stoporpunct = data_no_stoporpunct.most_common(50)
 
-    xindex = list(range(len(data))) #List from 0-length of data set, used as indexes for data
-    xticklabels =  [] #Hold our x labels to replace the indexes
-    yvalues = [] #Hold our freq values
+    xindex1 = list(range(len(data))) #List from 0-length of data set, used as indexes for data
+    xticklabels1 =  [] #Hold our x labels to replace the indexes
+    yvalues1 = [] #Hold our freq values
 
     #Parse data into x indexes and y values 0..n-1
     for pair in data:
-        xticklabels.append(pair[0])
-        yvalues.append(pair[1])
+        xticklabels1.append(pair[0])
+        yvalues1.append(pair[1])
 
-    plt.plot(xindex, yvalues, 'ro') #Plot dem numbers
-    plt.xticks(xindex, xticklabels, rotation='vertical') #Set xticks to correct labels
+    ax = plt.subplot(211)
+    plt.plot(xindex1, yvalues1, 'ro') #Plot dem numbers
+    plt.xticks(xindex1, xticklabels1, rotation='vertical') #Set xticks to correct labels
     #plt.yticks(np.arange(min(yvalues), max(yvalues) + 1, 1.0)) #Set ytick to intervals of 1
+    ax.set_title("Frequency Distribution")
+
+    #plt.figure(2)
+    ay = plt.subplot(212)
+    xindex2 = list(range(len(data_no_stoporpunct)))  # List from 0-length of data set, used as indexes for data
+    xticklabels2 = []  # Hold our x labels to replace the indexes
+    yvalues2 = []  # Hold our freq values
+
+    # Parse data into x indexes and y values 0..n-1
+    for pair in data_no_stoporpunct:
+        xticklabels2.append(pair[0])
+        yvalues2.append(pair[1])
+
+    plt.subplot(212)
+    plt.plot(xindex2, yvalues2, 'ro')  # Plot dem numbers
+    plt.xticks(xindex2, xticklabels2, rotation='vertical')  # Set xticks to correct labels
+    plt.yticks(np.arange(min(yvalues2), max(yvalues2) + 1, 1.0)) #Set ytick to intervals of 1
     plt.margins(0.2)
-    plt.subplots_adjust(bottom=0.15)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=0.5)
+    ay.set_title("Frequency Distribution w/o punctuation/stopwords")
+
+
+
 
     plt.show()
 
